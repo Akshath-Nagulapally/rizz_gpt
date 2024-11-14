@@ -1,0 +1,77 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+venv/
+env/
+.idea/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Visual Studio Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# JetBrains Rider
+.idea/
+
+# Linux
+*~
+
+# Logs
+*.log
+
+# OS generated files
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# VS
+.vs/
+
+# Maven
+*.log
+*.swp
+
+# Docker
+.docker/
+
+# compiled Java class files
+*.class
+
+# temporary files
+*.tmp
+*.bak
+
+# Project-specific build files
+/build/
+dist/
+out/
