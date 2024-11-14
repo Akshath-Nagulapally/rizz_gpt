@@ -36,3 +36,5 @@ Questions:
 2) Can I assume all images are valid, ie wont have to check for non rizz advice images?
 3) Does this thing need memory?
 4) Do I use SMS or do I use Whatsapp?
+5) Input validation: If there are more than n number of screenshots passed where n is the limit.
+6) JS to TS conversion
