@@ -34,3 +34,4 @@ If dating app chat --> Transcription node --> 3 potential followup lines.
 Questions:
 1) Database integration?
 2) Can I assume all images are valid, ie wont have to check for non rizz advice images?
+3) Does this thing need memory?
