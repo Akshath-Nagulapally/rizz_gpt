@@ -9,3 +9,28 @@ Tech Stack:
 1. Typescript, Express
 2. Twilio API
 3. LangGraph for agent control
+
+
+Image goes through a node that checks if it is even valid.
+
+If dating profile --> 3 possible pickup lines.
+If dating app chat --> Transcription node --> 3 potential followup lines.
+
+[Setup instructions]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Questions:
+1) Database integration?
+2) Can I assume all images are valid, ie wont have to check for non rizz advice images?
