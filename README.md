@@ -35,3 +35,4 @@ Questions:
 1) Database integration?
 2) Can I assume all images are valid, ie wont have to check for non rizz advice images?
 3) Does this thing need memory?
+4) Do I use SMS or do I use Whatsapp?
