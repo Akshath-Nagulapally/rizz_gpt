@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "target": "es6",                         // Sets the JavaScript version
-      "module": "commonjs",                     // Module system (use "esnext" for ES modules)
+      "module": "CommonJS",                     // Module system (use "esnext" for ES modules)
       "strict": true,                           // Enable all strict type-checking options
       "esModuleInterop": true,                  // Allow default imports from CommonJS modules
       "skipLibCheck": true,                     // Skip type checking of all declaration files (.d.ts)

@@ -31,8 +31,8 @@ Once you receive the confirmation step, you can then text your number (limited t
 Todos tomorrow:
 1) Handling screenshot upload, what do I even do with them 
 2) Turn Server.js into typescript
-3)  Langchain simple followup responses
-4)  Giving a friendly message if the filetype is not an image/video
+3) Langchain simple followup responses
+4) Giving a friendly message if the filetype is not an image/video
 5) Making the setup instructions look good
 6) Adding good documentation for the code
 
