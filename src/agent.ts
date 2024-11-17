@@ -1,5 +1,11 @@
+const express = require('express');
 import { HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from "@langchain/openai";
+import { Request, Response, NextFunction } from 'express';
+
+
+const app = express();
+const port = 5000;
 
 async function processImages(imageUrls: string[]) {
   if (imageUrls.length === 0) {
@@ -35,13 +41,34 @@ async function processImages(imageUrls: string[]) {
 }
 
   console.log(finalMessage);
+  return finalMessage;
 }
 
-// Example usage
-const imageUrls = [
-  "https://www.boredpanda.com/blog/wp-content/uploads/2022/02/clipimage-62036e125f6e3__700.jpg",
-  "https://cdn.osxdaily.com/wp-content/uploads/2018/08/save-iphone-messages-screenshot-method-2-369x800.jpeg",
-  "https://cdn.osxdaily.com/wp-content/uploads/2018/08/save-iphone-messages-screenshot-method-2-369x800.jpeg",
-  // Add more URLs if needed
-];
-processImages(imageUrls).catch(console.error);
+
+
+app.use(express.json({ limit: '50mb' })); 
+
+app.post('/', async (req: Request, res: Response) => {
+  try {
+
+    const { imageUrls } = req.body;
+    console.log(imageUrls)
+
+    // Validate input
+    if (!imageUrls || !Array.isArray(imageUrls)) {
+      return res.status(400).send('Invalid input: `imageUrls` must be an array of strings.');
+    }
+
+    // Call the async function
+    const data = await processImages(imageUrls); 
+    
+    // Send the result
+    res.send(data);                       
+  } catch (error) {
+    res.status(500).send('An error occurred'); // Handle errors
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
