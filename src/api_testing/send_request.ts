@@ -1,7 +1,7 @@
 import axios from 'axios';
   
 
-async function sendPostRequest(imageUrls) {
+async function sendPostRequest(imageUrls: Array<string>) {
   try {
     const response = await axios.post('http://localhost:5000', { imageUrls });
     console.log("request success")
