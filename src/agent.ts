@@ -7,6 +7,21 @@ import { Request, Response, NextFunction } from 'express';
 const app = express();
 const port = 5000;
 
+const prompt = `
+  You are an AI dating coach. Provide advice based on the given images.
+
+  For text conversation images:
+  1. Read the conversation from left to right (their message, then your message).
+  2. Assume the rightmost text is your message and the leftmost text is their message.
+  3. Suggest three follow-up responses that mimic your texting style.
+
+  For dating profile images:
+  1. Come up with three pickup lines as potential options to "slide in."
+
+  For multiple images:
+  Clearly divide your answers, making it easy to identify which response corresponds to which image.
+`;
+
 async function processImages(imageUrls: string[]) {
   if (imageUrls.length === 0) {
     console.log("Sorry, but you have not provided any images.");
@@ -25,7 +40,7 @@ async function processImages(imageUrls: string[]) {
   });
 
   const messageContent = [
-      { type: "text", text: "Divide your answers cleanly and clearly based on the image number. You are an AI dating coach. If the image is of a text conversation provide three followups and try to emulate my texting style. Always remember that the rightmost text is what I said and leftmost is what they said. You need to suggest to me what I CAN SAY. If image is of a dating profile then come up with three pickup lines to slide in." },
+      { type: "text", text: prompt },
     ...base64Images.map(base64Image => ({
         type: "image_url",
       image_url: { url: `data:image/jpeg;base64,${base64Image}` },
@@ -43,8 +58,6 @@ async function processImages(imageUrls: string[]) {
   console.log(finalMessage);
   return finalMessage;
 }
-
-
 
 app.use(express.json({ limit: '50mb' })); 
 

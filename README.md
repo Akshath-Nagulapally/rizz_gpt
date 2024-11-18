@@ -36,11 +36,12 @@ twilio phone-numbers:update "+18332083674" --sms-url="https://3454-130-126-255-3
 
 Once you receive the confirmation step, you can then text your number (limited to verified numbers only if you are on the free trial).
 
-Todos tomorrow:
-1) Handling screenshot upload, what do I even do with them 
-2) Turn Server.js into typescript
-3) Langchain simple followup responses
+Todos/further scope:
+1) Turn Server.js into typescript
+2) Validating the input filetype is image.
 4) Giving a friendly message if the filetype is not an image/video
+4.5) Adding text prompt feature as well as right now it only works on images
+4.75) Add an npm script that starts off the server and the agent.ts in one command
 5) Making the setup instructions look good
 6) Adding good documentation for the code
 7) Twilio MMS security. Basically anyone with the url can access the image. This should however be password protected in the future.
@@ -54,7 +55,7 @@ Todos tomorrow:
 15) Memory would also help the user ask followup questions/refinements to the messages.
 16) Not sure if twilio supports this but basically a widget or something that can do quick copypasting. Basically its kind of a pain to copypaste things so if there is a widget where I can simply click the line and copy to clipboard, that would be super useful.
 17) Instead of a widget, I can also make twilio simply sequence the messages. This way the user just has to select which line he likes the most instead of the other way around.
-
+18) Further scope: Delete all the twilio media once done
 
 
 
