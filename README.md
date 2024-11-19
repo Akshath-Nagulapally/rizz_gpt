@@ -38,7 +38,7 @@ Once you receive the confirmation step, you can then text your number (limited t
 
 Stanley's feedback:
 
-1) Langgraph persistence
+1) Langgraph persistence + Text context to the API instead of just the images.
 2) Segmentation of dating profile images
 3) Don't initialize model everytime
 4) Linting/Run prettier on the thing
