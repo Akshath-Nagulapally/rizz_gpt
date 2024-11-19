@@ -36,6 +36,15 @@ twilio phone-numbers:update "+18332083674" --sms-url="https://3454-130-126-255-3
 
 Once you receive the confirmation step, you can then text your number (limited to verified numbers only if you are on the free trial).
 
+Stanley's feedback:
+
+1) Langgraph persistence
+2) Segmentation of dating profile images
+3) Don't initialize model everytime
+4) Linting/Run prettier on the thing
+5) Consistency: Camelcasing/snake case consistently.
+
+
 Todos/further scope:
 1) Turn Server.js into typescript
 2) Validating the input filetype is image.
