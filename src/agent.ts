@@ -1,7 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 import { HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from "@langchain/openai";
 import { Request, Response, NextFunction } from 'express';
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";
 
 // Initialize the express app and set the port
 const app = express();
@@ -18,10 +21,16 @@ const prompt = `
 
   For dating profile images:
   1. Come up with three pickup lines as potential options to "slide in."
+  2. Personalize it based on the dating profile description, if its not there find some way to personalize it
 
   For multiple images:
   Clearly divide your answers, making it easy to identify which response corresponds to which image.
 `;
+
+
+// Initialize the AI model
+const llm = new ChatOpenAI({model: "gpt-4o", temperature: 0,});
+
 
 // Process the images and generate a response
 async function processImages(imageUrls: string[]) {
@@ -38,12 +47,6 @@ async function processImages(imageUrls: string[]) {
 
   // Convert the image data to base64 strings
   const base64Images = imageDatas.map(data => Buffer.from(data).toString('base64'));
-
-  // Initialize the AI model
-  const llm = new ChatOpenAI({
-    model: "gpt-4o",
-    temperature: 0,
-  });
 
   // Define the message content for the AI model
   const messageContent = [

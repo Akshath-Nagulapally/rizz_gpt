@@ -3,7 +3,7 @@
     "@langchain/community": "^0.3.14",
     "@langchain/core": "^0.3.18",
     "@langchain/langgraph": "^0.2.20",
-    "@langchain/openai": "^0.3.13",
+    "@langchain/openai": "^0.3.14",
     "@types/express": "^5.0.0",
     "@types/node": "^22.9.0",
     "@types/twilio": "^3.19.3",
@@ -13,6 +13,7 @@
     "express": "^4.21.1",
     "ext-name": "^5.0.0",
     "form-data": "^4.0.1",
+    "langchain": "^0.3.6",
     "sharp": "^0.33.5",
     "twilio": "^5.3.6"
   },
@@ -20,9 +21,9 @@
     "nodemon": "^3.1.7",
     "typescript": "^5.6.3"
   },
-"scripts": {
-  "run:agent": "npx tsx agent.ts",
-  "start:server": "node server.js",
-  "start": "concurrently \"npm run run:agent\" \"npm run start:server\""
+  "scripts": {
+    "run:agent": "npx tsx agent.ts",
+    "start:server": "node server.js",
+    "start": "concurrently \"npm run run:agent\" \"npm run start:server\""
   }
 }

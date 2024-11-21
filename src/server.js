@@ -172,5 +172,5 @@ app.post('/incoming', async (req, res) => {
  * Start the Express.js server.
  */
 app.listen(port, () => {
-  console.log(`Express server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
