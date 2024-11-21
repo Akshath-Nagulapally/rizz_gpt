@@ -3,8 +3,11 @@ const express = require('express');
 import { HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from "@langchain/openai";
 import { Request, Response, NextFunction } from 'express';
-import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";
+
+// defining twilio credentials for accessing http protected images
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
 
 // Initialize the express app and set the port
 const app = express();
@@ -33,7 +36,7 @@ const llm = new ChatOpenAI({model: "gpt-4o", temperature: 0,});
 
 
 // Process the images and generate a response
-async function processImages(imageUrls: string[]) {
+async function processImages(imageUrls: string[], userMessage: string , userId: string) {
   if (imageUrls.length === 0) {
     console.log("Sorry, but you have not provided any images.");
     return;
@@ -42,23 +45,34 @@ async function processImages(imageUrls: string[]) {
   // Limit the number of images to 2 for processing
   const limitedImageUrls = imageUrls.slice(0, 2);
 
-  // Fetch the images and convert them to base64
-  const imageDatas = await Promise.all(limitedImageUrls.map(url => fetch(url).then(res => res.arrayBuffer())));
 
+  const imageDatas = await Promise.all(limitedImageUrls.map(url =>
+    fetch(url, {
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+      }
+    }).then(res => res.arrayBuffer())
+  ));
+  
   // Convert the image data to base64 strings
   const base64Images = imageDatas.map(data => Buffer.from(data).toString('base64'));
+  
+  
+  const promptWithUserMessage = prompt + "User Message: " + userMessage
 
   // Define the message content for the AI model
   const messageContent = [
-      { type: "text", text: prompt },
+      { type: "text", text: promptWithUserMessage },
     ...base64Images.map(base64Image => ({
         type: "image_url",
       image_url: { url: `data:image/jpeg;base64,${base64Image}` },
     })),
   ];
 
+  const metadata = {"user_id": userId}
+
   // Create a new HumanMessage instance
-  const message = new HumanMessage({ content: messageContent });
+  const message = new HumanMessage({ content: messageContent, response_metadata: metadata});
 
   // Invoke the AI model and generate a response
   const imageDescriptionAiMsg = await llm.invoke([message]);
@@ -81,7 +95,12 @@ app.use(express.json({ limit: '50mb' }));
 app.post('/', async (req: Request, res: Response) => {
   try {
     // Extract the image URLs from the request body
+    console.log("request body", req.body)
     const { imageUrls } = req.body;
+    const { phoneNumberId } = req.body; 
+    const { userMessage } = req.body; 
+
+    console.log("the phone number id is as follows:", phoneNumberId)
     console.log(imageUrls);
 
     // Validate the input image URLs
@@ -90,7 +109,7 @@ app.post('/', async (req: Request, res: Response) => {
     }
 
     // Process the images and generate a response
-    const data = await processImages(imageUrls); 
+    const data = await processImages(imageUrls, userMessage, phoneNumberId); 
     
     // Send the response
     res.send(data);                       

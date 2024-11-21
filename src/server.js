@@ -52,14 +52,15 @@ function getTwilioClient() {
  * @param {string[]} imageUrls - an array of image URLs.
  * @returns {Promise<AxiosResponse>}
  */
-async function getLLMResponse(imageUrls) {
+async function getLLMResponse(imageUrls, userMessage, phoneNumberId) {
   let response;
+
+  console.log("right now just logging:", userMessage)
   try {
-    response = await axios.post(langchainApiUrl, { imageUrls });
+    response = await axios.post(langchainApiUrl, { imageUrls, userMessage, phoneNumberId });
   } catch (error) {
     console.error('Error:', error);
   }
-
   return response;
 }
 
@@ -81,8 +82,11 @@ app.post('/incoming', async (req, res) => {
    * - MessageSid: the message SID.
    */
   const { body } = req;
-  const { NumMedia, From: SenderNumber, MessageSid } = body;
-
+  const { NumMedia, From: senderNumber, MessageSid } = body;
+  const { Body: textMessage } = body;
+  const receivedTextMessage = body.Body || "";
+  console.log(`Text message received from ${senderNumber}: ${receivedTextMessage}`);
+  
   /**
    * Define an array to store media items.
    */
@@ -104,6 +108,7 @@ app.post('/incoming', async (req, res) => {
   for (var i = 0; i < NumMedia; i++) {  // eslint-disable-line
     const mediaUrl = body[`MediaUrl${i}`];
     const contentType = body[`MediaContentType${i}`];
+    console.log("content Type", contentType)
     const extension = extName.mime(contentType)[0].ext;
     const mediaSid = path.basename(urlUtil.parse(mediaUrl).pathname);
     const filename = `${mediaSid}.${extension}`;
@@ -130,7 +135,7 @@ app.post('/incoming', async (req, res) => {
   /**
    * Send a POST request to the Langchain API and retrieve a response.
    */
-  const responseData = await getLLMResponse(mediaUrlArray);
+  const responseData = await getLLMResponse(mediaUrlArray, receivedTextMessage, senderNumber);
 
   /**
    * Log the LLM response data to the console.
@@ -159,7 +164,7 @@ app.post('/incoming', async (req, res) => {
    */
   response.message({
     from: twilioPhoneNumber,
-    to: SenderNumber,
+    to: senderNumber,
   }, messageBody);
 
   /**

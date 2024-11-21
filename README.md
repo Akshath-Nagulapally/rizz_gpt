@@ -30,7 +30,7 @@ Twilio configuration needs to be updated based on this issue error:
 NOTE: Make sure you add "/sms" to the end of the ngrok url that you update in Twilio.
 
 
-twilio phone-numbers:update "+18332083674" --sms-url="https://3454-130-126-255-35.ngrok-free.app/sms"
+twilio phone-numbers:update "+18447556921" --sms-url="https://3454-130-126-255-35.ngrok-free.app/sms"
 
 
 
