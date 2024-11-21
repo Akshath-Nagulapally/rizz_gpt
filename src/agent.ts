@@ -25,6 +25,7 @@ const prompt = `
   For dating profile images:
   1. Come up with three pickup lines as potential options to "slide in."
   2. Personalize it based on the dating profile description, if its not there find some way to personalize it
+  3. all the images can be of the same dating profile so be aware of this case.
 
   For multiple images:
   Clearly divide your answers, making it easy to identify which response corresponds to which image.
