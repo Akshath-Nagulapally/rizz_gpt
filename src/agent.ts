@@ -1,13 +1,12 @@
-require('dotenv').config();
-const express = require('express');
-import { HumanMessage } from '@langchain/core/messages';
+require("dotenv").config();
+const express = require("express");
+import { HumanMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
 // defining twilio credentials for accessing http protected images
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-
 
 // Initialize the express app and set the port
 const app = express();
@@ -31,13 +30,15 @@ const prompt = `
   Clearly divide your answers, making it easy to identify which response corresponds to which image.
 `;
 
-
 // Initialize the AI model
-const llm = new ChatOpenAI({model: "gpt-4o", temperature: 0,});
-
+const llm = new ChatOpenAI({ model: "gpt-4o", temperature: 0 });
 
 // Process the images and generate a response
-async function processImages(imageUrls: string[], userMessage: string , userId: string) {
+async function processImages(
+  imageUrls: string[],
+  userMessage: string,
+  userId: string,
+) {
   if (imageUrls.length === 0) {
     console.log("Sorry, but you have not provided any images.");
     return;
@@ -46,34 +47,41 @@ async function processImages(imageUrls: string[], userMessage: string , userId: 
   // Limit the number of images to 2 for processing
   const limitedImageUrls = imageUrls.slice(0, 2);
 
+  const imageDatas = await Promise.all(
+    limitedImageUrls.map((url) =>
+      fetch(url, {
+        headers: {
+          Authorization:
+            "Basic " +
+            Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
+        },
+      }).then((res) => res.arrayBuffer()),
+    ),
+  );
 
-  const imageDatas = await Promise.all(limitedImageUrls.map(url =>
-    fetch(url, {
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-      }
-    }).then(res => res.arrayBuffer())
-  ));
-  
   // Convert the image data to base64 strings
-  const base64Images = imageDatas.map(data => Buffer.from(data).toString('base64'));
-  
-  
-  const promptWithUserMessage = prompt + "User Message: " + userMessage
+  const base64Images = imageDatas.map((data) =>
+    Buffer.from(data).toString("base64"),
+  );
+
+  const promptWithUserMessage = prompt + "User Message: " + userMessage;
 
   // Define the message content for the AI model
   const messageContent = [
-      { type: "text", text: promptWithUserMessage },
-    ...base64Images.map(base64Image => ({
-        type: "image_url",
+    { type: "text", text: promptWithUserMessage },
+    ...base64Images.map((base64Image) => ({
+      type: "image_url",
       image_url: { url: `data:image/jpeg;base64,${base64Image}` },
     })),
   ];
 
-  const metadata = {"user_id": userId}
+  const metadata = { user_id: userId };
 
   // Create a new HumanMessage instance
-  const message = new HumanMessage({ content: messageContent, response_metadata: metadata});
+  const message = new HumanMessage({
+    content: messageContent,
+    response_metadata: metadata,
+  });
 
   // Invoke the AI model and generate a response
   const imageDescriptionAiMsg = await llm.invoke([message]);
@@ -81,8 +89,9 @@ async function processImages(imageUrls: string[], userMessage: string , userId: 
 
   // Add a note for cases where more than 2 images are provided
   if (imageUrls.length > 2) {
-    finalMessage += "\n Currently I only take a max of two images so I have provided you answers for the first two here.";
-}
+    finalMessage +=
+      "\n Currently I only take a max of two images so I have provided you answers for the first two here.";
+  }
 
   // Log and return the final response
   console.log(finalMessage);
@@ -90,33 +99,35 @@ async function processImages(imageUrls: string[], userMessage: string , userId: 
 }
 
 // Set up the express app to accept large JSON payloads
-app.use(express.json({ limit: '50mb' })); 
+app.use(express.json({ limit: "50mb" }));
 
 // Define the endpoint to process images
-app.post('/', async (req: Request, res: Response) => {
+app.post("/", async (req: Request, res: Response) => {
   try {
     // Extract the image URLs from the request body
-    console.log("request body", req.body)
+    console.log("request body", req.body);
     const { imageUrls } = req.body;
-    const { phoneNumberId } = req.body; 
-    const { userMessage } = req.body; 
+    const { phoneNumberId } = req.body;
+    const { userMessage } = req.body;
 
-    console.log("the phone number id is as follows:", phoneNumberId)
+    console.log("the phone number id is as follows:", phoneNumberId);
     console.log(imageUrls);
 
     // Validate the input image URLs
     if (!imageUrls || !Array.isArray(imageUrls)) {
-      return res.status(400).send('Invalid input: `imageUrls` must be an array of strings.');
+      return res
+        .status(400)
+        .send("Invalid input: `imageUrls` must be an array of strings.");
     }
 
     // Process the images and generate a response
-    const data = await processImages(imageUrls, userMessage, phoneNumberId); 
-    
+    const data = await processImages(imageUrls, userMessage, phoneNumberId);
+
     // Send the response
-    res.send(data);                       
+    res.send(data);
   } catch (error) {
     // Handle errors
-    res.status(500).send('An error occurred');
+    res.status(500).send("An error occurred");
   }
 });
 

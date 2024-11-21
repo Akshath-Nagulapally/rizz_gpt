@@ -1,13 +1,13 @@
-require('dotenv').config();
-const express = require('express');
-const { MessagingResponse } = require('twilio').twiml;
-const axios = require('axios');
-const Twilio = require('twilio');
-const extName = require('ext-name');
-const urlUtil = require('url');
-const path = require('path');
-const fs = require('fs');
-const fetch = require('node-fetch');
+require("dotenv").config();
+const express = require("express");
+const { MessagingResponse } = require("twilio").twiml;
+const axios = require("axios");
+const Twilio = require("twilio");
+const extName = require("ext-name");
+const urlUtil = require("url");
+const path = require("path");
+const fs = require("fs");
+const fetch = require("node-fetch");
 
 /**
  * Define constants for application configuration.
@@ -18,17 +18,18 @@ const fetch = require('node-fetch');
  * - NODE_ENV: the Node.js environment (production).
  * - langchainApiUrl: the URL of the Langchain API.
  */
-const PUBLIC_DIR = './public/mms_images';
+const PUBLIC_DIR = "./public/mms_images";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-const NODE_ENV = 'production';
-const langchainApiUrl = process.env.LANGCHAIN_API_URL || 'http://localhost:5000';
+const NODE_ENV = "production";
+const langchainApiUrl =
+  process.env.LANGCHAIN_API_URL || "http://localhost:5000";
 
 /**
  * Log Twilio configuration details to the console.
  */
-console.log('Twilio Configuration:');
+console.log("Twilio Configuration:");
 console.log(`TWILIO_PHONE_NUMBER: ${twilioPhoneNumber}`);
 console.log(`TWILIO_ACCOUNT_SID: ${twilioAccountSid}`);
 console.log(`TWILIO_AUTH_TOKEN: ${twilioAuthToken}`);
@@ -55,11 +56,15 @@ function getTwilioClient() {
 async function getLLMResponse(imageUrls, userMessage, phoneNumberId) {
   let response;
 
-  console.log("right now just logging:", userMessage)
+  console.log("right now just logging:", userMessage);
   try {
-    response = await axios.post(langchainApiUrl, { imageUrls, userMessage, phoneNumberId });
+    response = await axios.post(langchainApiUrl, {
+      imageUrls,
+      userMessage,
+      phoneNumberId,
+    });
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
   return response;
 }
@@ -74,7 +79,7 @@ app.use(express.urlencoded({ extended: true }));
  * @param {Request} req - the incoming request.
  * @param {Response} res - the outgoing response.
  */
-app.post('/incoming', async (req, res) => {
+app.post("/incoming", async (req, res) => {
   /**
    * Extract relevant data from the request body.
    * - NumMedia: the number of media items.
@@ -85,8 +90,10 @@ app.post('/incoming', async (req, res) => {
   const { NumMedia, From: senderNumber, MessageSid } = body;
   const { Body: textMessage } = body;
   const receivedTextMessage = body.Body || "";
-  console.log(`Text message received from ${senderNumber}: ${receivedTextMessage}`);
-  
+  console.log(
+    `Text message received from ${senderNumber}: ${receivedTextMessage}`,
+  );
+
   /**
    * Define an array to store media items.
    */
@@ -105,10 +112,11 @@ app.post('/incoming', async (req, res) => {
    * - mediaSid: the media SID.
    * - filename: the filename.
    */
-  for (var i = 0; i < NumMedia; i++) {  // eslint-disable-line
+  for (var i = 0; i < NumMedia; i++) {
+    // eslint-disable-line
     const mediaUrl = body[`MediaUrl${i}`];
     const contentType = body[`MediaContentType${i}`];
-    console.log("content Type", contentType)
+    console.log("content Type", contentType);
     const extension = extName.mime(contentType)[0].ext;
     const mediaSid = path.basename(urlUtil.parse(mediaUrl).pathname);
     const filename = `${mediaSid}.${extension}`;
@@ -130,12 +138,18 @@ app.post('/incoming', async (req, res) => {
   /**
    * Log a message to indicate the start of LLM processing.
    */
-  console.log("------------------------------------ LLM message -------------------------------");
+  console.log(
+    "------------------------------------ LLM message -------------------------------",
+  );
 
   /**
    * Send a POST request to the Langchain API and retrieve a response.
    */
-  const responseData = await getLLMResponse(mediaUrlArray, receivedTextMessage, senderNumber);
+  const responseData = await getLLMResponse(
+    mediaUrlArray,
+    receivedTextMessage,
+    senderNumber,
+  );
 
   /**
    * Log the LLM response data to the console.
@@ -145,14 +159,15 @@ app.post('/incoming', async (req, res) => {
   /**
    * Log a message to indicate the end of LLM processing.
    */
-  console.log("-------------------------------- end of LLM message ----------------------------");
+  console.log(
+    "-------------------------------- end of LLM message ----------------------------",
+  );
 
   /**
    * Define the message body for the Twilio response.
    */
-  const messageBody = Number(NumMedia) === 0
-  ? 'Send me an image!'
-  : `${responseData.data}`;
+  const messageBody =
+    Number(NumMedia) === 0 ? "Send me an image!" : `${responseData.data}`;
 
   /**
    * Create a Twilio MessagingResponse object.
@@ -162,10 +177,13 @@ app.post('/incoming', async (req, res) => {
   /**
    * Add a message to the Twilio response.
    */
-  response.message({
-    from: twilioPhoneNumber,
-    to: senderNumber,
-  }, messageBody);
+  response.message(
+    {
+      from: twilioPhoneNumber,
+      to: senderNumber,
+    },
+    messageBody,
+  );
 
   /**
    * Return the Twilio response.
