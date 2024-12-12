@@ -105,13 +105,9 @@ app.use(express.json({ limit: "50mb" }));
 app.post("/", async (req: Request, res: Response) => {
   try {
     // Extract the image URLs from the request body
-    console.log("request body", req.body);
     const { imageUrls } = req.body;
     const { phoneNumberId } = req.body;
     const { userMessage } = req.body;
-
-    console.log("the phone number id is as follows:", phoneNumberId);
-    console.log(imageUrls);
 
     // Validate the input image URLs
     if (!imageUrls || !Array.isArray(imageUrls)) {
