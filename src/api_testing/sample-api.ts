@@ -11,8 +11,6 @@ async function processImages(imageUrls: string[]) {
   return imageUrls;
 }
 
-//processImages(imageUrls).catch(console.error);
-
 app.post('/', async (req: Request, res: Response) => {
   try {
 
@@ -27,9 +25,9 @@ app.post('/', async (req: Request, res: Response) => {
     const processedData = await processImages(imageUrls);
 
     const data = await processImages(imageUrls); // Call the async function
-    res.send(data);                   // Send the result
+    res.send(data);                              // Send the result
   } catch (error) {
-    res.status(500).send('An error occurred'); // Handle errors
+    res.status(500).send('An error occurred');   // Handle errors
   }
 });
 
