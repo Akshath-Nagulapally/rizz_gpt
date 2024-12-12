@@ -42,7 +42,6 @@ function getTwilioClient() {
 async function getLLMResponse(imageUrls, userMessage, phoneNumberId) {
   let response;
 
-  console.log("right now just logging:", userMessage);
   try {
     response = await axios.post(langchainApiUrl, {
       imageUrls,
@@ -72,7 +71,7 @@ app.post("/incoming", async (req, res) => {
   const mediaUrlArray = [];
 
   //Iterate over the media items and extract relevant data.
-  for (var i = 0; i < NumMedia; i++) {
+  for (let i = 0; i < NumMedia; i++) {
     // eslint-disable-line
     const mediaUrl = body[`MediaUrl${i}`];
     const contentType = body[`MediaContentType${i}`];
